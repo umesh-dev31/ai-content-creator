@@ -1,9 +1,13 @@
+import { Search } from 'lucide-react'
 import React from 'react'
 
 function Header() {
   return (
     <div>
-      Header
+      <div>
+        <Search />
+        <input type='text' placeholder='Search...' />
+      </div>
     </div>
   )
 }
