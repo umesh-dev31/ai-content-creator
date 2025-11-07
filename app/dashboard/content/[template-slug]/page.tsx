@@ -16,12 +16,14 @@ async function CreateNewContent({ params }: { params: Promise<{ 'template-slug':
   }
 
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 gap-5 p-5'>
+    <div className='grid grid-cols-1 md:grid-cols-3 gap-5 p-5'>
       {/* FORMSECTION */}
       <FormSection selectedTemplate={selectedTemplate}/>
 
       {/* OUTPUTSECTION */}
+      <div className='col-span-2'>
       <OutputSection/>
+      </div>
     </div>
   );
 }
