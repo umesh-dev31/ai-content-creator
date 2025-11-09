@@ -8,24 +8,32 @@ import { Button } from '@/components/ui/button';
 
 interface PROPS{
     selectedTemplate?:TEMPLATE;
+    userFormInput:any
 }
 
-function FormSection({selectedTemplate}: PROPS) {
+function FormSection({selectedTemplate,  userFormInput}: PROPS) {
   const [formData, setFormData] = useState<Record<string, string>>({});
+  
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) => {
+      return {
+        ...prevData,
+        [name]: value,
+      };
+    });
   }
 
-  const onSubmit =(e:any)=>{
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
-    // Handle form submission logic here
+    console.log('Form submitted! FormData:', formData); // Debug log
+    if (userFormInput && typeof userFormInput === 'function') {
+      userFormInput(formData);
+    } else {
+      console.error('userFormInput is not a function:', userFormInput);
+    }
   }
 
   return (
@@ -45,12 +53,14 @@ function FormSection({selectedTemplate}: PROPS) {
             {field.field === 'input' ? (
               <Input
                 name={field.name}
+                value={formData[field.name] || ''}
                 required={Boolean(field.required)}
                 onChange={handleInputChange}
               />
             ) : field.field === 'textarea' ? (
               <Textarea
                 name={field.name}
+                value={formData[field.name] || ''}
                 required={Boolean(field.required)}
                 onChange={handleInputChange}
               />

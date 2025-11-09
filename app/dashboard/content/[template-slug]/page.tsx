@@ -1,8 +1,7 @@
 import React from 'react'
-import FormSection from '../_components/FormSection'
-import OutputSection from '../_components/OutputSection'
 import { TEMPLATE } from '../../_components/TemplateListSection'
 import Templates from '@/app/(data)/Templates'
+import ContentGenerator from './ContentGenerator'
 
 async function CreateNewContent({ params }: { params: Promise<{ 'template-slug': string }> }) {
   const awaitedParams = await params;
@@ -15,17 +14,7 @@ async function CreateNewContent({ params }: { params: Promise<{ 'template-slug':
     return <div className="p-10 text-red-500 font-bold">Template not found.</div>;
   }
 
-  return (
-    <div className='grid grid-cols-1 md:grid-cols-3 gap-5 p-5'>
-      {/* FORMSECTION */}
-      <FormSection selectedTemplate={selectedTemplate}/>
-
-      {/* OUTPUTSECTION */}
-      <div className='col-span-2'>
-      <OutputSection/>
-      </div>
-    </div>
-  );
+  return <ContentGenerator selectedTemplate={selectedTemplate} />;
 }
 
 export default CreateNewContent
