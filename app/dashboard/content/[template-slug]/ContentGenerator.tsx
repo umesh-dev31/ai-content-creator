@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import FormSection from '../_components/FormSection'
@@ -7,17 +7,52 @@ import OutputSection from '../_components/OutputSection'
 import { TEMPLATE } from '../../_components/TemplateListSection'
 import { Button } from '@/components/ui/button'
 
-
-
 interface ContentGeneratorProps {
   selectedTemplate: TEMPLATE;
 }
 
 function ContentGenerator({ selectedTemplate }: ContentGeneratorProps) {
-  const GenerateAIContent = (formData: any) => {
-    console.log('Form data received:', formData);
-    // Handle AI content generation here
-    // You can add API calls, state updates, etc.
+  const [loading, setLoading] = useState(false);
+  const [generatedContent, setGeneratedContent] = useState<string>('');
+
+  const GenerateAIContent = async (formData: any) => {
+    try {
+      setLoading(true);
+      console.log('Generating content with formData:', formData);
+      console.log('AI Prompt:', selectedTemplate?.aiPrompt);
+
+      const response = await fetch('/api/generate-content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          formData: formData,
+          aiPrompt: selectedTemplate?.aiPrompt,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('API Error:', errorData);
+        throw new Error(errorData.error || 'Failed to generate content');
+      }
+
+      const result = await response.json();
+      console.log('AI Response received:', result);
+      console.log('Generated content:', result.content);
+
+      if (result.success && result.content) {
+        setGeneratedContent(result.content);
+      } else {
+        console.error('Unexpected response format:', result);
+      }
+    } catch (error: any) {
+      console.error('Error in GenerateAIContent:', error);
+      alert('Failed to generate content: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,11 +70,12 @@ function ContentGenerator({ selectedTemplate }: ContentGeneratorProps) {
         <FormSection 
           selectedTemplate={selectedTemplate}
           userFormInput={GenerateAIContent}
+          loading={loading}
         />
 
         {/* OUTPUTSECTION */}
         <div className='col-span-2'>
-          <OutputSection/>
+          <OutputSection content={generatedContent} />
         </div>
       </div>
     </div>
