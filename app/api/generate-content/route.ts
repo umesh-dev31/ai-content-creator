@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI } from '@google/genai';
+import Groq from 'groq-sdk';
 
 export async function POST(request: NextRequest) {
   try {
@@ -7,20 +7,20 @@ export async function POST(request: NextRequest) {
 
     console.log('API Route - Received request:', { formData, aiPrompt });
 
-    // Check if API key is set
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_GEMINI_API_KEY;
+    // Check if API key is set (try both NEXT_PUBLIC and server-side env vars)
+    const apiKey = process.env.GROQ_API_KEY || process.env.NEXT_PUBLIC_GROQ_API_KEY;
     if (!apiKey) {
       console.error('API Key not found in environment variables');
       return NextResponse.json(
-        { error: 'Google Gemini API key is not configured' },
+        { error: 'Groq API key is not configured. Please set GROQ_API_KEY in your .env file.' },
         { status: 500 }
       );
     }
 
-    console.log('API Key found, initializing Google GenAI...');
+    console.log('API Key found, initializing Groq...');
 
-    // Initialize Google GenAI
-    const ai = new GoogleGenAI({
+    // Initialize Groq client
+    const groq = new Groq({
       apiKey: apiKey,
     });
 
@@ -32,60 +32,43 @@ export async function POST(request: NextRequest) {
 
     console.log('Final prompt:', finalPrompt);
 
-    // Configure the model - use a simpler model name for text generation
-    const model = 'gemini-2.0-flash-exp';
+    // Groq model options - using fast and reliable models
+    const model = 'llama-3.3-70b-versatile'; // Fast and capable model
+    
+    console.log(`Calling Groq model: ${model}...`);
 
-    // Create contents array
-    const contents = [
-      {
-        role: 'user' as const,
-        parts: [
-          {
-            text: finalPrompt,
-          },
-        ],
-      },
-    ];
-
-    console.log('Calling AI model...');
-
-    // Generate content stream
-    const response = await ai.models.generateContentStream({
-      model,
-      contents,
+    // Generate content using Groq streaming
+    const stream = await groq.chat.completions.create({
+      model: model,
+      messages: [
+        {
+          role: 'user',
+          content: finalPrompt,
+        },
+      ],
+      stream: true,
     });
 
-    console.log('AI response received, processing stream...');
+    console.log('Groq response stream received, processing...');
 
-    // Collect the text response
+    // Collect the text response from stream
     let fullText = '';
-    for await (const chunk of response) {
-      console.log('Chunk received:', chunk);
-      
-      // Try different ways to access the text
-      if (chunk.text) {
-        // Direct text access (as in AiModal.tsx)
-        console.log('Text chunk (direct):', chunk.text);
-        fullText += chunk.text;
-      } else if (chunk.candidates?.[0]?.content?.parts?.[0]?.text) {
-        // Nested text access
-        const text = chunk.candidates[0].content.parts[0].text;
-        console.log('Text chunk (nested):', text);
-        fullText += text;
-      } else {
-        console.log('Skipping chunk - no text found');
+    for await (const chunk of stream) {
+      const content = chunk.choices[0]?.delta?.content || '';
+      if (content) {
+        fullText += content;
       }
     }
 
-    console.log('Full text generated:', fullText.substring(0, 100) + '...');
-
     if (!fullText) {
-      console.error('No text was generated from the AI response');
+      console.error('No text was generated from Groq response');
       return NextResponse.json(
         { error: 'No content generated from AI' },
         { status: 500 }
       );
     }
+
+    console.log('Full text generated:', fullText.substring(0, 100) + '...');
 
     return NextResponse.json({ 
       success: true, 
@@ -95,10 +78,15 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Error generating content:', error);
     console.error('Error stack:', error.stack);
+    console.error('Error details:', {
+      message: error.message,
+      name: error.name,
+      cause: error.cause
+    });
     return NextResponse.json(
       { 
         error: 'Failed to generate content', 
-        details: error.message,
+        details: error.message || 'Unknown error occurred',
         stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       },
       { status: 500 }

@@ -33,9 +33,17 @@ function ContentGenerator({ selectedTemplate }: ContentGeneratorProps) {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          errorData = { error: `HTTP ${response.status}: ${response.statusText}` };
+        }
         console.error('API Error:', errorData);
-        throw new Error(errorData.error || 'Failed to generate content');
+        const errorMessage = errorData.details 
+          ? `${errorData.error}: ${errorData.details}` 
+          : (errorData.error || 'Failed to generate content');
+        throw new Error(errorMessage);
       }
 
       const result = await response.json();
