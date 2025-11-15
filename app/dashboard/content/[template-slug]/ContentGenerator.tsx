@@ -6,6 +6,7 @@ import FormSection from '../_components/FormSection'
 import OutputSection from '../_components/OutputSection'
 import { TEMPLATE } from '../../_components/TemplateListSection'
 import { Button } from '@/components/ui/button'
+import { useUser } from '@clerk/nextjs'
 
 interface ContentGeneratorProps {
   selectedTemplate: TEMPLATE;
@@ -14,6 +15,37 @@ interface ContentGeneratorProps {
 function ContentGenerator({ selectedTemplate }: ContentGeneratorProps) {
   const [loading, setLoading] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<string>('');
+  const { user } = useUser();
+
+  const SaveInDB = async (formData: any, slug: string, aiResponse: string) => {
+    try {
+      const userEmail = user?.primaryEmailAddress?.emailAddress || user?.id || '';
+      
+      const response = await fetch('/api/save-content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          formData: formData,
+          templateSlug: slug,
+          aiResponse: aiResponse,
+          userEmail: userEmail,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error saving to DB:', errorData);
+        return;
+      }
+
+      const result = await response.json();
+      console.log('Content saved successfully:', result);
+    } catch (error: any) {
+      console.error('Error saving to database:', error);
+    }
+  };
 
   const GenerateAIContent = async (formData: any) => {
     try {
@@ -52,6 +84,8 @@ function ContentGenerator({ selectedTemplate }: ContentGeneratorProps) {
 
       if (result.success && result.content) {
         setGeneratedContent(result.content);
+        // Save to database after successful generation
+        await SaveInDB(formData, selectedTemplate.slug, result.content);
       } else {
         console.error('Unexpected response format:', result);
       }
