@@ -81,7 +81,11 @@ function UsageTrack() {
           <h2 className='text-sm my-2'>Loading...</h2>
         </div>
         <Link href="/dashboard/billing">
-          <Button variant={'secondary'} className='w-full my-3'>
+          <Button
+            suppressHydrationWarning
+            variant={'secondary'}
+            className='w-full my-3'
+          >
             Upgrade
           </Button>
         </Link>
@@ -109,7 +113,11 @@ function UsageTrack() {
         </h2>
       </div>
       <Link href="/dashboard/billing">
-        <Button variant={'secondary'} className='w-full my-3'>
+        <Button
+          suppressHydrationWarning
+          variant={'secondary'}
+          className='w-full my-3'
+        >
           Upgrade
         </Button>
       </Link>
