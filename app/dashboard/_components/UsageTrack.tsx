@@ -1,20 +1,24 @@
 'use client'
 import { Button } from '@/components/ui/button'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useUser } from '@clerk/nextjs'
+import { UserSubscriptionContext } from '@/app/(context)/UserSubscriptionContext'
+import Link from 'next/link'
 
 interface UsageData {
   used: number
   total: number
-  percentage: string
+  percentage: number
   totalGenerations: number
   totalCharacters: number
+  isSubscribed: boolean
 }
 
 function UsageTrack() {
   const { user, isLoaded } = useUser()
   const [usage, setUsage] = useState<UsageData | null>(null)
   const [loading, setLoading] = useState(true)
+  const subscriptionContext = useContext(UserSubscriptionContext)
 
   useEffect(() => {
     if (isLoaded && user) {
@@ -22,21 +26,49 @@ function UsageTrack() {
     }
   }, [isLoaded, user])
 
-  const fetchUsage = async () => {
+  const fetchUsage = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch('/api/usage')
       const data = await response.json()
       
       if (data.success) {
-        setUsage(data.data)
+        const payload = data.data
+        setUsage({
+          used: payload.used,
+          total: payload.total,
+          percentage: Number(payload.percentage),
+          totalGenerations: payload.totalGenerations,
+          totalCharacters: payload.totalCharacters,
+          isSubscribed: payload.isSubscribed ?? false,
+        })
+        subscriptionContext?.setUserSubscription(payload.isSubscribed ?? false)
       }
     } catch (error) {
       console.error('Error fetching usage:', error)
     } finally {
       setLoading(false)
     }
-  }
+  }, [subscriptionContext])
+
+  useEffect(() => {
+    if (isLoaded && user) {
+      fetchUsage()
+    }
+  }, [isLoaded, user, fetchUsage])
+
+  useEffect(() => {
+    const handleUsageUpdated = () => {
+      if (isLoaded && user) {
+        fetchUsage()
+      }
+    }
+
+    window.addEventListener('usageUpdated', handleUsageUpdated)
+    return () => {
+      window.removeEventListener('usageUpdated', handleUsageUpdated)
+    }
+  }, [fetchUsage, isLoaded, user])
 
   if (loading || !usage) {
     return (
@@ -48,10 +80,19 @@ function UsageTrack() {
           </div>
           <h2 className='text-sm my-2'>Loading...</h2>
         </div>
-        <Button variant={'secondary'} className='w-full my-3'>Upgrade</Button>
+        <Link href="/dashboard/billing">
+          <Button variant={'secondary'} className='w-full my-3'>
+            Upgrade
+          </Button>
+        </Link>
       </div>
     )
   }
+
+  const isSubscribed =
+    subscriptionContext?.userSubscription ?? usage.isSubscribed
+  const totalLimit = isSubscribed ? 100000 : usage.total
+  const usagePercentage = Math.min((usage.used / totalLimit) * 100, 100)
 
   return (
     <div className='m-5'>
@@ -60,14 +101,18 @@ function UsageTrack() {
         <div className='h-2 bg-[#9981f9] w-full rounded-full mt-3'>
           <div 
             className='h-2 bg-white rounded-full transition-all duration-300' 
-            style={{ width: `${usage.percentage}%` }}
+            style={{ width: `${usagePercentage.toFixed(1)}%` }}
           ></div>
         </div>
         <h2 className='text-sm my-2'>
-          {usage.used.toLocaleString()}/{usage.total.toLocaleString()} Credits Used
+          {usage.used.toLocaleString()}/{totalLimit.toLocaleString()} Credits Used
         </h2>
       </div>
-      <Button variant={'secondary'} className='w-full my-3'>Upgrade</Button>
+      <Link href="/dashboard/billing">
+        <Button variant={'secondary'} className='w-full my-3'>
+          Upgrade
+        </Button>
+      </Link>
     </div>
   )
 }

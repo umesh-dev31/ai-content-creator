@@ -1,8 +1,13 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Check } from 'lucide-react'
 import axios from 'axios'
+import { useRouter } from 'next/navigation'
+import { useUser } from '@clerk/nextjs'
+import db from '@/utils/db'
+import { UserSubscription } from '@/utils/schema'
+import { UserSubscriptionContext } from '@/app/(context)/UserSubscriptionContext'
 
 declare global {
   interface Window {
@@ -29,8 +34,13 @@ async function loadRazorpayScript() {
 
 function BillingPage() {
   const [loading, setLoading] = useState(false)
+  const { user } = useUser()
+  const router = useRouter()
+  const subscriptionContext = useContext(UserSubscriptionContext)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
+
+  const isSubscribed = subscriptionContext?.userSubscription ?? false
 
   const onPayment = async (subId: string) => {
     const sdkLoaded = await loadRazorpayScript()
@@ -54,6 +64,8 @@ function BillingPage() {
       handler: async (resp: any) => {
         console.log('Razorpay payment success:', resp)
         setSuccessMessage('Subscription payment completed successfully.')
+        await SaveSubscription(resp?.razorpay_payment_id)
+        router.refresh()
       },
       theme: {
         color: '#000000',
@@ -62,6 +74,35 @@ function BillingPage() {
 
     const rzp = new window.Razorpay(options)
     rzp.open()
+  }
+
+  const SaveSubscription = async (paymentId: string | undefined) => {
+    if (!paymentId) {
+      console.warn('Payment ID missing, subscription not saved.')
+      return
+    }
+
+    const email = user?.primaryEmailAddress?.emailAddress
+    const userName = user?.fullName
+
+    if (!email || !userName) {
+      console.warn('User info incomplete, subscription not saved.')
+      return
+    }
+
+    try {
+      const result = await db.insert(UserSubscription).values({
+        email,
+        userName,
+        status: true,
+        paymentId,
+        joinDate: new Date().toLocaleDateString('en-GB'),
+      })
+      console.log('Subscription saved:', result)
+      subscriptionContext?.setUserSubscription(true)
+    } catch (err) {
+      console.error('Failed to save subscription:', err)
+    }
   }
   
   const CreateSubscription = async () => {
@@ -131,9 +172,9 @@ function BillingPage() {
           <Button 
             variant="secondary" 
             className="w-full bg-gray-200 text-gray-800 hover:bg-gray-300"
-            disabled
+            disabled={!isSubscribed}
           >
-            Currently Active Plan
+            {isSubscribed ? 'Free Plan' : 'Currently Active Plan'}
           </Button>
         </div>
 
@@ -180,9 +221,9 @@ function BillingPage() {
             onClick={CreateSubscription}
             variant="outline" 
             className="w-full border-primary text-primary hover:bg-primary hover:text-white"
-            disabled={loading}
+            disabled={loading || isSubscribed}
           >
-            {loading ? 'Processing…' : 'Get Started'}
+            {isSubscribed ? 'Current Plan' : loading ? 'Processing…' : 'Get Started'}
           </Button>
         </div>
       </div>

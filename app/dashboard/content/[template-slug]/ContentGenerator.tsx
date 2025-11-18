@@ -86,6 +86,9 @@ function ContentGenerator({ selectedTemplate }: ContentGeneratorProps) {
         setGeneratedContent(result.content);
         // Save to database after successful generation
         await SaveInDB(formData, selectedTemplate.slug, result.content);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('usageUpdated'));
+        }
       } else {
         console.error('Unexpected response format:', result);
       }

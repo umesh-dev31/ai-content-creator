@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { FileClock, Home, icons, Settings, WalletCards } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import UsageTrack from './UsageTrack'
+import Link from 'next/link'
 
 function SideNav() {
 
@@ -23,7 +24,7 @@ function SideNav() {
         }, {
             name:'Setting',
             icons:Settings ,
-            path:'/dashboard/setting'
+            path:'/dashboard/settings'
         }, 
     ]
     const path=usePathname();
@@ -40,14 +41,16 @@ function SideNav() {
         <hr className='my-5 border'/>
         <div className='mt-10'>
             {MenuList.map((menu,index)=>(
-                <div
+                <Link
+                    key={menu.path}
+                    href={menu.path}
                     className={`flex gap-2 mb-2 p-3 hover:bg-primary
                     hover:text-white rounded-lg
                     cursor-pointer items-center ${path==menu.path ? "bg-primary text-white" : ""}`}
                 >
                     <menu.icons />
                     <h2>{menu.name}</h2>
-                </div>
+                </Link>
             ))}
         </div>
         <div className='absolute bottom-10 left-0 w-full'>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import db from '@/utils/db';
-import { AIOutput } from '@/utils/schema';
+import { AIOutput, UserSubscription } from '@/utils/schema';
 import { eq, or } from 'drizzle-orm';
 
 export async function GET(request: NextRequest) {
@@ -52,8 +52,19 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Total credits limit (10,000 words as an example)
-    const totalCredits = 10000;
+    // Determine subscription status to adjust limits
+    let isSubscribed = false;
+    if (userEmail) {
+      const subscription = await db
+        .select({ status: UserSubscription.status })
+        .from(UserSubscription)
+        .where(eq(UserSubscription.email, userEmail))
+        .limit(1);
+      isSubscribed = Boolean(subscription[0]?.status);
+    }
+
+    // Total credits limit
+    const totalCredits = isSubscribed ? 100000 : 10000;
     const usedCredits = totalWords;
     const percentage = Math.min((usedCredits / totalCredits) * 100, 100);
 
@@ -64,7 +75,8 @@ export async function GET(request: NextRequest) {
         total: totalCredits,
         percentage: percentage.toFixed(1),
         totalGenerations: history.length,
-        totalCharacters: totalCharacters
+        totalCharacters: totalCharacters,
+        isSubscribed
       }
     });
 
