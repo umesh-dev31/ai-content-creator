@@ -72,9 +72,28 @@ function ContentGenerator({ selectedTemplate }: ContentGeneratorProps) {
           errorData = { error: `HTTP ${response.status}: ${response.statusText}` };
         }
         console.error('API Error:', errorData);
+        
+        // Handle rate limit errors
+        if (response.status === 429) {
+          const retryAfter = errorData.retryAfter || 60;
+          const errorMessage = errorData.details || `Rate limit exceeded. Please try again in ${retryAfter} seconds.`;
+          alert(errorMessage);
+          throw new Error(errorMessage);
+        }
+        
+        // Handle credit limit errors
+        if (response.status === 403 && errorData.error?.includes('Credit')) {
+          const errorMessage = errorData.details || errorData.error || 'Credit limit exceeded';
+          if (confirm(`${errorMessage}\n\nWould you like to upgrade your plan?`)) {
+            window.location.href = '/dashboard/billing';
+          }
+          throw new Error(errorMessage);
+        }
+        
         const errorMessage = errorData.details 
           ? `${errorData.error}: ${errorData.details}` 
           : (errorData.error || 'Failed to generate content');
+        alert(errorMessage);
         throw new Error(errorMessage);
       }
 
