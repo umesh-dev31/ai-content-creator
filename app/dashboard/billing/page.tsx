@@ -124,54 +124,54 @@ function BillingPage() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-8 bg-black min-h-screen">
       {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Upgrade With Yearly Plan</h1>
+          <h1 className="text-4xl font-bold mb-2 text-white">Upgrade With Yearly Plan</h1>
         </div>
 
       {/* Pricing Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
         {/* Free Plan Card */}
-        <div className="bg-white border rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div className="bg-white/5 border border-white/10 rounded-lg shadow-sm p-6 hover:shadow-md hover:border-white/20 transition-all">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold mb-2">Free</h2>
+            <h2 className="text-2xl font-bold mb-2 text-white">Free</h2>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-bold">0$</span>
-              <span className="text-gray-600">/month</span>
+              <span className="text-3xl font-bold text-white">0$</span>
+              <span className="text-gray-400">/month</span>
             </div>
           </div>
 
           <div className="space-y-4 mb-6">
             <div className="flex items-center gap-3">
-              <div className="shrink-0 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+              <div className="shrink-0 w-5 h-5 rounded-full bg-red-600 flex items-center justify-center">
                 <Check className="w-3 h-3 text-white" />
               </div>
-              <span className="text-gray-700">10,000 Words/Month</span>
+              <span className="text-gray-300">10,000 Words/Month</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="shrink-0 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+              <div className="shrink-0 w-5 h-5 rounded-full bg-red-600 flex items-center justify-center">
                 <Check className="w-3 h-3 text-white" />
               </div>
-              <span className="text-gray-700">50+ Content Templates</span>
+              <span className="text-gray-300">50+ Content Templates</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="shrink-0 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+              <div className="shrink-0 w-5 h-5 rounded-full bg-red-600 flex items-center justify-center">
                 <Check className="w-3 h-3 text-white" />
               </div>
-              <span className="text-gray-700">Unlimited Download & Copy</span>
+              <span className="text-gray-300">Unlimited Download & Copy</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="shrink-0 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+              <div className="shrink-0 w-5 h-5 rounded-full bg-red-600 flex items-center justify-center">
                 <Check className="w-3 h-3 text-white" />
               </div>
-              <span className="text-gray-700">1 Month of History</span>
+              <span className="text-gray-300">1 Month of History</span>
             </div>
           </div>
 
           <Button 
             variant="secondary" 
-            className="w-full bg-gray-200 text-gray-800 hover:bg-gray-300"
+            className="w-full bg-white/10 text-white hover:bg-white/20 border border-white/20"
             disabled={!isSubscribed}
           >
             {isSubscribed ? 'Free Plan' : 'Currently Active Plan'}
@@ -179,48 +179,48 @@ function BillingPage() {
         </div>
 
         {/* Monthly Plan Card */}
-        <div className="bg-white border-2 border-primary rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow relative">
+        <div className="bg-white/5 border-2 border-red-600 rounded-lg shadow-sm p-6 hover:shadow-md hover:border-red-500 transition-all relative">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold mb-2">Monthly</h2>
+            <h2 className="text-2xl font-bold mb-2 text-white">Monthly</h2>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-bold">
-                <span className="bg-white px-2 py-1 rounded text-primary">9.99</span>
+              <span className="text-3xl font-bold text-white">
+                <span className="bg-red-600 px-2 py-1 rounded text-white">9.99</span>
               </span>
-              <span className="text-gray-600">$/year</span>
+              <span className="text-gray-400">$/year</span>
             </div>
           </div>
 
           <div className="space-y-4 mb-6">
             <div className="flex items-center gap-3">
-              <div className="shrink-0 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+              <div className="shrink-0 w-5 h-5 rounded-full bg-red-600 flex items-center justify-center">
                 <Check className="w-3 h-3 text-white" />
               </div>
-              <span className="text-gray-700">1,00,000 Words/Month</span>
+              <span className="text-gray-300">1,00,000 Words/Month</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="shrink-0 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+              <div className="shrink-0 w-5 h-5 rounded-full bg-red-600 flex items-center justify-center">
                 <Check className="w-3 h-3 text-white" />
               </div>
-              <span className="text-gray-700">50+ Template Access</span>
+              <span className="text-gray-300">50+ Template Access</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="shrink-0 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+              <div className="shrink-0 w-5 h-5 rounded-full bg-red-600 flex items-center justify-center">
                 <Check className="w-3 h-3 text-white" />
               </div>
-              <span className="text-gray-700">Unlimited Download & Copy</span>
+              <span className="text-gray-300">Unlimited Download & Copy</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="shrink-0 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+              <div className="shrink-0 w-5 h-5 rounded-full bg-red-600 flex items-center justify-center">
                 <Check className="w-3 h-3 text-white" />
               </div>
-              <span className="text-gray-700">1 Year of History</span>
+              <span className="text-gray-300">1 Year of History</span>
             </div>
           </div>
 
           <Button 
             onClick={CreateSubscription}
             variant="outline" 
-            className="w-full border-primary text-primary hover:bg-primary hover:text-white"
+            className="w-full border-2 border-red-600 text-white hover:bg-red-600 hover:text-white bg-red-600/10"
             disabled={loading || isSubscribed}
           >
             {isSubscribed ? 'Current Plan' : loading ? 'Processing…' : 'Get Started'}
@@ -229,10 +229,10 @@ function BillingPage() {
       </div>
 
       {errorMessage && (
-        <p className="text-destructive mt-4">{errorMessage}</p>
+        <p className="text-red-500 mt-4">{errorMessage}</p>
       )}
       {successMessage && (
-        <p className="text-green-600 mt-4">{successMessage}</p>
+        <p className="text-green-500 mt-4">{successMessage}</p>
       )}
     </div>
   )

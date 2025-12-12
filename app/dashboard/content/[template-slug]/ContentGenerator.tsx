@@ -101,10 +101,10 @@ function ContentGenerator({ selectedTemplate }: ContentGeneratorProps) {
   };
 
   return (
-    <div className='p-5'>
+    <div className='p-5 bg-black min-h-screen'>
       {/* Back Button */}
       <Link href="/dashboard">
-        <Button variant="ghost" className="mb-5 flex items-center gap-2">
+        <Button variant="ghost" className="mb-5 flex items-center gap-2 text-white hover:text-red-600 hover:bg-white/10">
           <ArrowLeft className="w-4 h-4" />
           Back to Dashboard
         </Button>

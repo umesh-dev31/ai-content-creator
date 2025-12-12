@@ -39,18 +39,18 @@ function FormSection({selectedTemplate,  userFormInput, loading}: PROPS) {
   }
 
   return (
-    <div className='p-5 shadow-md border rounded-lg bg-white'>
+    <div className='p-5 shadow-md border border-white/10 rounded-lg bg-white/5'>
       {/* @ts-ignore */}
       <Image src={selectedTemplate?.icon}
       alt='icon' width={70} height={70} />
 
-      <h2 className='font-bold text-2xl mb-2 text-primary'>
+      <h2 className='font-bold text-2xl mb-2 text-white'>
         {selectedTemplate?.name}</h2>
-      <p className='text-gray-500 text-sm'>{selectedTemplate?.desc}</p>
+      <p className='text-gray-400 text-sm'>{selectedTemplate?.desc}</p>
       <form className='mt-6' onSubmit={onSubmit}>
         {selectedTemplate?.form?.map((field) => (
           <div key={field.name} className='mb-4'>
-            <label className='font-bold block mb-2'>{field.label}</label>
+            <label className='font-bold block mb-2 text-white'>{field.label}</label>
 
             {field.field === 'input' ? (
               <Input
@@ -58,6 +58,7 @@ function FormSection({selectedTemplate,  userFormInput, loading}: PROPS) {
                 value={formData[field.name] || ''}
                 required={Boolean(field.required)}
                 onChange={handleInputChange}
+                className='bg-white/10 border-white/20 text-white placeholder:text-gray-500'
               />
             ) : field.field === 'textarea' ? (
               <Textarea
@@ -65,12 +66,13 @@ function FormSection({selectedTemplate,  userFormInput, loading}: PROPS) {
                 value={formData[field.name] || ''}
                 required={Boolean(field.required)}
                 onChange={handleInputChange}
+                className='bg-white/10 border-white/20 text-white placeholder:text-gray-500'
               />
             ) : null}
           </div>
         ))}
         <Button type="submit"
-         className='mt-6 w-full py-6'
+         className='mt-6 w-full py-6 bg-red-600 hover:bg-red-700 text-white'
          disabled={loading}>
           {loading&&<Loader2Icon className='animate-spin' />}
           Generate Content</Button>

@@ -74,13 +74,13 @@ function HistoryPage() {
 
   if (loading) {
     return (
-      <div className="p-8">
+      <div className="p-8 bg-black min-h-screen">
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
+          <div className="h-8 bg-white/10 rounded w-1/4 mb-2"></div>
+          <div className="h-4 bg-white/10 rounded w-1/2 mb-8"></div>
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-20 bg-gray-200 rounded"></div>
+              <div key={i} className="h-20 bg-white/10 rounded"></div>
             ))}
           </div>
         </div>
@@ -89,54 +89,54 @@ function HistoryPage() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-8 bg-black min-h-screen">
       {/* Header */}
       <div className="mb-8">
         <Link 
           href="/dashboard"
-          className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-4 transition-colors"
+          className="inline-flex items-center gap-2 text-red-600 hover:text-red-500 mb-4 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           <span className="font-medium">Back to Dashboard</span>
         </Link>
-        <h1 className="text-4xl font-bold mb-2">History</h1>
-        <p className="text-gray-600 text-lg">Search your previously generate AI content</p>
+        <h1 className="text-4xl font-bold mb-2 text-white">History</h1>
+        <p className="text-gray-400 text-lg">Search your previously generate AI content</p>
       </div>
 
       {/* Table */}
       {history.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg border">
-          <p className="text-gray-500 text-lg">No history found. Start generating content to see it here!</p>
+        <div className="text-center py-12 bg-white/5 rounded-lg border border-white/10">
+          <p className="text-gray-400 text-lg">No history found. Start generating content to see it here!</p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="bg-white/5 rounded-lg border border-white/10 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b">
+              <thead className="bg-white/10 border-b border-white/10">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">TEMPLATE</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">CONTENT</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">DATE</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">WORDS</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">COPY</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-white">TEMPLATE</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-white">CONTENT</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-white">DATE</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-white">WORDS</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-white">COPY</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-white/10">
                 {history.map((item) => {
                   const template = getTemplateInfo(item.templateSlug)
                   const wordCount = getWordCount(item.aiResponse)
                   const truncatedResponse = truncateText(item.aiResponse, 150)
                   
                   return (
-                    <tr key={item.id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={item.id} className="hover:bg-white/5 transition-colors">
                       {/* TEMPLATE */}
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="shrink-0">
                             {template.slug === 'write-code' ? (
-                              <Code2 className="w-5 h-5 text-primary" />
+                              <Code2 className="w-5 h-5 text-red-600" />
                             ) : template.slug === 'instagram-hash-tag-generator' ? (
-                              <Hash className="w-5 h-5 text-primary" />
+                              <Hash className="w-5 h-5 text-red-600" />
                             ) : (
                               <Image 
                                 src={template.icon} 
@@ -147,14 +147,14 @@ function HistoryPage() {
                               />
                             )}
                           </div>
-                          <span className="text-sm font-medium text-gray-900">{template.name}</span>
+                          <span className="text-sm font-medium text-white">{template.name}</span>
                         </div>
                       </td>
                       
                       {/* AI RESP */}
                       <td className="px-6 py-4">
                         <div className="max-w-md">
-                          <p className="text-sm text-gray-700 line-clamp-2">
+                          <p className="text-sm text-gray-300 line-clamp-2">
                             {truncatedResponse}
                           </p>
                         </div>
@@ -162,21 +162,21 @@ function HistoryPage() {
                       
                       {/* DATE */}
                       <td className="px-6 py-4">
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-gray-400">
                           {item.createdAt || 'N/A'}
                         </span>
                       </td>
                       
                       {/* WORDS */}
                       <td className="px-6 py-4">
-                        <span className="text-sm text-gray-600">{wordCount}</span>
+                        <span className="text-sm text-gray-400">{wordCount}</span>
                       </td>
                       
                       {/* COPY */}
                       <td className="px-6 py-4">
                         <button
                           onClick={() => handleCopy(item.aiResponse, item.id)}
-                          className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors flex items-center gap-1"
+                          className="text-red-600 hover:text-red-500 text-sm font-medium transition-colors flex items-center gap-1"
                         >
                           {copiedId === item.id ? (
                             <>

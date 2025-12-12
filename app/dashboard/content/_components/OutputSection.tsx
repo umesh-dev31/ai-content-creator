@@ -25,10 +25,10 @@ function OutputSection({ content }: OutputSectionProps) {
   };
 
   return (
-    <div className='bg-white shadow-lg border rounded-lg'>
-      <div className='flex justify-between items-center p-5'>
-        <h2 className='text-xl font-bold'>Your Content</h2>
-        <Button onClick={handleCopy}>
+    <div className='bg-white/5 shadow-lg border border-white/10 rounded-lg'>
+      <div className='flex justify-between items-center p-5 border-b border-white/10'>
+        <h2 className='text-xl font-bold text-white'>Your Content</h2>
+        <Button onClick={handleCopy} className='bg-red-600 hover:bg-red-700 text-white'>
           {copied ? (
             <>
               <Check className="w-4 h-4 mr-2" />
@@ -42,13 +42,15 @@ function OutputSection({ content }: OutputSectionProps) {
           )}
         </Button>
       </div>
-      <Editor
-        ref={editorRef} 
-        initialValue={content || "Your Content will be generated here..."}
-        height="600px"
-        initialEditType="wysiwyg"
-        useCommandShortcut={true}
-      />
+      <div className='bg-white'>
+        <Editor
+          ref={editorRef} 
+          initialValue={content || "Your Content will be generated here..."}
+          height="600px"
+          initialEditType="wysiwyg"
+          useCommandShortcut={true}
+        />
+      </div>
     </div>
   )
 }

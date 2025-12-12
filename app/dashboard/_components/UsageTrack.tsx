@@ -73,9 +73,9 @@ function UsageTrack() {
   if (loading || !usage) {
     return (
       <div className='m-5'>
-        <div className='bg-primary text-white rounded-lg p-2'>
+        <div className='bg-red-600 text-white rounded-lg p-2'>
           <h2 className='font-medium'>Credits</h2>
-          <div className='h-2 bg-[#9981f9] w-full rounded-full mt-3'>
+          <div className='h-2 bg-red-800 w-full rounded-full mt-3'>
             <div className='h-2 bg-white rounded-full' style={{ width: '0%' }}></div>
           </div>
           <h2 className='text-sm my-2'>Loading...</h2>
@@ -84,7 +84,7 @@ function UsageTrack() {
           <Button
             suppressHydrationWarning
             variant={'secondary'}
-            className='w-full my-3'
+            className='w-full my-3 bg-white text-black hover:bg-gray-200'
           >
             Upgrade
           </Button>
@@ -100,9 +100,9 @@ function UsageTrack() {
 
   return (
     <div className='m-5'>
-      <div className='bg-primary text-white rounded-lg p-2'>
+      <div className='bg-red-600 text-white rounded-lg p-2'>
         <h2 className='font-medium'>Credits</h2>
-        <div className='h-2 bg-[#9981f9] w-full rounded-full mt-3'>
+        <div className='h-2 bg-red-800 w-full rounded-full mt-3'>
           <div 
             className='h-2 bg-white rounded-full transition-all duration-300' 
             style={{ width: `${usagePercentage.toFixed(1)}%` }}
@@ -116,7 +116,7 @@ function UsageTrack() {
         <Button
           suppressHydrationWarning
           variant={'secondary'}
-          className='w-full my-3'
+          className='w-full my-3 bg-white text-black hover:bg-gray-200'
         >
           Upgrade
         </Button>
